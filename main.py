@@ -10,22 +10,11 @@ import os
 # 4. Print the list of dead assets based on the filter
 # 5. Print the count of dead assets based on the filter
 
-url = "https://cloud.tenable.com/assets"
+THRESHOLD_DAYS = 7
 
-main_headers = {
-        "accept": "application/json",
-        "content-type": "application/json",
-        "X-ApiKeys": os.getenv('TENABLE_API_KEY')
-    }
-
-try:
-    response = requests.get(url, headers=main_headers)
-    response.raise_for_status()  # Raise an exception for HTTP errors
-
-except requests.exceptions.RequestException as e:
-    print("Error making the API request:", e)
-    response = None  # Set response to None in case of an error
-
+def get_threshold_time():
+    current_time = datetime.utcnow()
+    return current_time - timedelta(days=THRESHOLD_DAYS)
 
 
 def get_list_of_dead_assets(response):
@@ -122,6 +111,28 @@ def get_host_details(headers, hosts):
             print(f"Status code: {response.status_code}")
     
     return matching_hosts  # Return the list of matching hosts
+
+
+
+url = "https://cloud.tenable.com/assets"
+
+main_headers = {
+        "accept": "application/json",
+        "content-type": "application/json",
+        "X-ApiKeys": os.getenv('TENABLE_API_KEY')
+    }
+
+try:
+    response = requests.get(url, headers=main_headers)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+
+except requests.exceptions.RequestException as e:
+    print("Error making the API request:", e)
+    response = None  # Set response to None in case of an error
+
+
+
+
 
 
 # Continue with the rest of the code, checking if response is not None before using it
